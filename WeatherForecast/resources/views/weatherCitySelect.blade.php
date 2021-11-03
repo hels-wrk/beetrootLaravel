@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Http;
 
 $apiKey = '23714fafb632e1ad8b618eed2b153f1b';
-$city = $_GET['city'];
+$city = $_GET['city'] ?? 'Kyiv';
 
 $url = 'http://api.openweathermap.org/data/2.5/weather?q=' . $city . '&lang=ru&units=metric&appid=' . $apiKey;
 $response = Http::get($url);
@@ -23,10 +23,11 @@ $data = json_decode($response);
 </head>
 <body>
 <div class="weather">
-    <form action="#" method="get">
-        <select name="city">
+    <form action="#" method="GET">
+        <select name='city'>
             <option value="Kyiv">Kyiv</option>
             <option value="Moscow">Moscow</option>
+            <option value="Chernihiv">Chernihiv</option>
         </select>
         <div><input type="submit" value="Show weather"></div>
     </form>

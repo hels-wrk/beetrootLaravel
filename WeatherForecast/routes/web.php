@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/weatherKyiv', function () {
+    return view('weatherKyiv');
+});
+
+Route::get('/weather/{city}', [\App\Http\Controllers\WeatherCity::class, "index"]);
+
+Route::get('/weatherCitySelect', function () {
+    return view('weatherCitySelect');
+});
+
+
+

@@ -231,4 +231,6 @@ return [
 
     ],
 
+    'openweathermap_app_id' => env('OPEN_WEATHER_MAP_ID'),
+
 ];

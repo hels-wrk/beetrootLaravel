@@ -2,45 +2,57 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Facades\Http;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 
 class FetchWeather extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'weather {city}';
+    private const DEFAULT_PRECISION = 1;
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $signature = 'weather {cities*}';
+
+
+    protected $description = 'Fetch the weather for particular city.';
+
+    public function handle(): void
     {
-        parent::__construct();
+        $this->output->table(
+            ['City', 'Temperature, °C', 'Humidity, %', 'Pressure, mm Hg', 'Wind, m/s'],
+            $this->getWeatherDetails()
+        );
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    private function getWeatherDetails(): array
     {
-        $city = $this->argument('city');
-        $key = '23714fafb632e1ad8b618eed2b153f1b';
-        $response = Http::get("https://api.openweathermap.org/data/2.5/weather?q={$city}&appid={$key}");
-        return var_export(json_decode($response));
+        $dataByCities = [];
+        foreach ($this->argument('cities') as $city) {
+            $url = sprintf(
+                'api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric',
+                $city,
+                config('app.openweathermap_app_id')
+            );
+            $response = Http::get($url);
+            if ($response->status() !== Response::HTTP_OK) {
+                throw new Exception("Invalid response: {$response->body()}");
+            }
+
+            $decodedResponse = json_decode($response->body(), true);
+            $dataByCities[] = compact('city') + $this->normalizeWeatherDetails($decodedResponse);
+        }
+
+        return $dataByCities;
+    }
+
+    private function normalizeWeatherDetails(array $weatherData): array
+    {
+        return [
+            'temperature' => (int) $weatherData['main']['temp'],
+            'humidity' => (int) $weatherData['main']['humidity'],
+            'pressure' => (int) $weatherData['main']['pressure'],
+            'wind' => round($weatherData['wind']['speed'], self::DEFAULT_PRECISION),
+        ];
     }
 }

@@ -1,36 +1,22 @@
 <?php
+namespace App\Services\Weather;
 
-namespace App\Console\Commands;
 
-
+use App\Models\city;
 use Exception;
-use Illuminate\Console\Command;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 
-class FetchWeather extends Command
+
+class GetterWeather
 {
     private const DEFAULT_PRECISION = 1;
 
-
-    protected $signature = 'weather {cities*}';
-
-
-    protected $description = 'Fetch the weather for particular city.';
-
-    public function handle(): void
-    {
-        $this->output->table(
-            ['City', 'Temperature, °C', 'Humidity, %', 'Pressure, mm Hg', 'Wind, m/s'],
-            $this->getWeatherDetails()
-        );
-
-    }
-
-    private function getWeatherDetails(): array
+    public function getWeatherDetails(): array
     {
         $dataByCities = [];
-        foreach ($this->argument('cities') as $city) {
+        foreach (City::all() as $city) {
+            $city = $city->city;
             $url = sprintf(
                 'api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric',
                 $city,

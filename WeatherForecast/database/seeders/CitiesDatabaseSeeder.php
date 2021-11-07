@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Services\Weather\GetterWeather;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -31,8 +30,6 @@ class CitiesDatabaseSeeder extends Seeder
                 'city' => $city,
             ]);
         }
-
-
     }
 
 }

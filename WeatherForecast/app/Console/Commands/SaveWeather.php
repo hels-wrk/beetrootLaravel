@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Schema;
+
 
 class SaveWeather extends Command
 {
@@ -23,11 +23,10 @@ class SaveWeather extends Command
     {
         $dataByCities = [];
         foreach (City::all() as $city) {
-            $city = $city->city;
 
             $url = sprintf(
                 'api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric',
-                $city,
+                $city->city,
                 config('app.openweathermap_app_id')
             );
             $response = Http::get($url);
@@ -39,7 +38,7 @@ class SaveWeather extends Command
             var_export($decodedResponse);
 
             DB::table('weather')->insert([
-                'city'=>$city,
+                'city_id'=>$city->id,
                 'temperature' => $decodedResponse['main']['temp'],
                 'humidity' => $decodedResponse['main']['humidity'],
                 'pressure' => $decodedResponse['main']['pressure'],

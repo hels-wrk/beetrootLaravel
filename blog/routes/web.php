@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\PostCreate;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home');
 
-Route::get('post/create', \App\Http\Livewire\PostCreate::class);
+Route::get('post/create', PostCreate::class);
 
 Route::get('post/{slug}', \App\Http\Livewire\Post::class);

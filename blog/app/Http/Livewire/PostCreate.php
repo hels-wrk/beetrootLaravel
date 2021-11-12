@@ -20,12 +20,13 @@ class PostCreate extends Component
         $this->post = new Post;
     }
 
-    public function savePost(){
+    public function savePost() {
         $this->post->user_id = 1;
         $this->post->slug = Str::slug($this->post->title);
         $this->post->save();
         $this->saveSuccess = true;
     }
+
 
     public function render()
     {
